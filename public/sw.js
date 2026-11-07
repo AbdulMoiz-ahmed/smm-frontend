@@ -1,5 +1,5 @@
 /* Service worker: offline app shell + notification click handling. API calls are never cached. */
-const CACHE = 'planner-shell-v3';
+const CACHE = 'planner-shell-v4';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {

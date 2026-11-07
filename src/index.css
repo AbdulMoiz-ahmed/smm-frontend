@@ -7,7 +7,7 @@
     border-color: #e2e8f0;
   }
   html {
-    overflow-x: hidden;
+    overflow-x: clip;
     -webkit-text-size-adjust: 100%;
     color-scheme: light;
     scroll-behavior: smooth;
@@ -15,7 +15,7 @@
   body {
     margin: 0;
     min-width: 320px;
-    overflow-x: hidden;
+    overflow-x: clip;
     min-height: 100vh;
     background: #f8fafc;
     color: #1e293b;
