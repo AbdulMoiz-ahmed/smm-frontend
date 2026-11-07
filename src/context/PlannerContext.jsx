@@ -150,6 +150,30 @@ export function PlannerProvider({ children }) {
     }
   };
 
+  const deleteMonthDeliverables = async (yearMonth, monthLabel = '') => {
+    try {
+      const res = await fetch(`${API_BASE}/deliverables/month/${yearMonth}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.detail || errJson.error || 'Failed to delete month deliverables');
+      }
+      const data = await res.json();
+      await refreshData();
+      addToast(
+        `Deleted ${data.deletedCount || 0} deliverables for ${monthLabel || yearMonth}!`,
+        'success'
+      );
+      return data;
+    } catch (err) {
+      console.error('Error deleting month deliverables:', err);
+      addToast(err.message || 'Failed to delete month deliverables', 'error');
+      return null;
+    }
+  };
+
   const duplicateDeliverable = async (id) => {
     try {
       const res = await fetch(`${API_BASE}/deliverables/${id}/duplicate`, {
@@ -389,6 +413,7 @@ export function PlannerProvider({ children }) {
         addDeliverable,
         updateDeliverable,
         deleteDeliverable,
+        deleteMonthDeliverables,
         duplicateDeliverable,
         updateStatus,
         addClient,

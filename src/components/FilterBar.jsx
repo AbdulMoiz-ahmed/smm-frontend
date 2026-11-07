@@ -8,14 +8,39 @@ export default function FilterBar({
   onResetFilters,
   viewMode,
   onViewModeChange,
-  showBrandFilter = true
+  showBrandFilter = true,
+  showMonthFilter = true
 }) {
   const { clients, deliverables, roleRestrictedFormat } = usePlanner();
 
-  // Dynamically extract all weeks from live deliverables data
+  // Dynamically extract all available months from deliverables
+  const availableMonths = useMemo(() => {
+    const map = {};
+    deliverables.forEach(d => {
+      if (d.date && /^\d{4}-\d{2}/.test(d.date)) {
+        const ym = d.date.slice(0, 7);
+        map[ym] = (map[ym] || 0) + 1;
+      }
+    });
+    return Object.keys(map).sort().map(ym => {
+      const [y, m] = ym.split('-').map(Number);
+      const d = new Date(y, m - 1, 1);
+      return {
+        key: ym,
+        label: d.toLocaleString('en-US', { month: 'long', year: 'numeric' }),
+        count: map[ym]
+      };
+    });
+  }, [deliverables]);
+
+  // Dynamically extract all weeks from live deliverables data (scoped to month if selected)
   const availableWeeks = useMemo(() => {
     const weeksSet = new Set(['Week 1', 'Week 2', 'Week 3', 'Week 4']);
-    deliverables.forEach(d => {
+    const targetDeliverables = (filters.month && filters.month !== 'All')
+      ? deliverables.filter(d => d.date && d.date.startsWith(filters.month))
+      : deliverables;
+
+    targetDeliverables.forEach(d => {
       if (d.week && d.week.trim()) weeksSet.add(d.week.trim());
     });
     return Array.from(weeksSet).sort((a, b) => {
@@ -23,11 +48,12 @@ export default function FilterBar({
       const numB = parseInt(b.replace(/\D/g, ''), 10) || 0;
       return numA - numB;
     });
-  }, [deliverables]);
+  }, [deliverables, filters.month]);
 
   const hasActiveFilters =
     filters.search ||
     (showBrandFilter && filters.brand !== 'All') ||
+    (filters.month && filters.month !== 'All') ||
     filters.week !== 'All' ||
     filters.format !== 'All' ||
     filters.status !== 'All' ||
@@ -68,6 +94,26 @@ export default function FilterBar({
             {clients.map(c => (
               <option key={c.id} value={c.name}>
                 {c.name}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {/* Dynamic Month Filter */}
+        {showMonthFilter && availableMonths.length > 0 && (
+          <select
+            value={filters.month || 'All'}
+            onChange={e => onFilterChange('month', e.target.value)}
+            className={`px-2.5 py-1.5 text-xs rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer ${
+              filters.month && filters.month !== 'All'
+                ? 'bg-orange-50 border border-orange-300 text-orange-900 font-bold'
+                : 'bg-slate-50 border border-slate-200 text-slate-700'
+            }`}
+          >
+            <option value="All">All Months ({deliverables.length})</option>
+            {availableMonths.map(m => (
+              <option key={m.key} value={m.key}>
+                📅 {m.label} ({m.count})
               </option>
             ))}
           </select>

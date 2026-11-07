@@ -4,7 +4,7 @@ import { usePlanner } from '../context/PlannerContext';
 import { 
   Clock, Calendar, Layers, Table2, Building2, Users, ChevronLeft, ChevronRight, 
   LogOut, Shield, Palette, Crown, ChevronDown, ChevronUp, Database, 
-  FileSpreadsheet, UploadCloud, RotateCcw, CheckCircle2, PenTool, Video, Share2, Briefcase, ScrollText
+  FileSpreadsheet, UploadCloud, RotateCcw, CheckCircle2, PenTool, Video, Share2, Briefcase, ScrollText, BarChart3
 } from 'lucide-react';
 import { getRoleMeta } from '../utils/roles';
 
@@ -173,6 +173,29 @@ export default function Sidebar({
                       activeTab === 'master' ? 'bg-orange-700 text-white' : 'bg-slate-800 text-slate-400'
                     }`}>
                       {deliverables.length}
+                    </span>
+                  </div>
+                )}
+              </button>
+            )}
+
+            {/* Monthly Report */}
+            {hasPermission('view_master') && (
+              <button
+                onClick={() => handleNavClick('monthly-report')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  activeTab === 'monthly-report'
+                    ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                }`}
+                title="Monthly Deliverables & Performance Report"
+              >
+                <BarChart3 className={`w-4 h-4 shrink-0 ${activeTab === 'monthly-report' ? 'text-white' : 'text-amber-400'}`} />
+                {!isCollapsed && (
+                  <div className="flex-1 flex items-center justify-between">
+                    <span>Monthly Report</span>
+                    <span className="text-[10px] text-amber-300 font-semibold px-1.5 py-0.2 rounded bg-amber-500/20 border border-amber-500/30">
+                      Report
                     </span>
                   </div>
                 )}

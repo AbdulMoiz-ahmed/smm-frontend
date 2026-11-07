@@ -20,12 +20,13 @@ import ClientModal from './components/ClientModal';
 import BackupModal from './components/BackupModal';
 import ExcelImportModal from './components/ExcelImportModal';
 import AuditLogsView from './components/AuditLogsView';
+import MonthlyReportView from './components/MonthlyReportView';
 import Toast from './components/Toast';
-import { Clock, ArrowRight, ShieldAlert } from 'lucide-react';
+import { Clock, ArrowRight, ShieldAlert, Calendar, BarChart3, Trash2 } from 'lucide-react';
 
 function DashboardContent() {
   const { user, isAuthenticated, isLoadingAuth, isAdmin, hasPermission, canAccessTab } = useAuth();
-  const { deliverables, clients } = usePlanner();
+  const { deliverables, clients, deleteMonthDeliverables } = usePlanner();
 
   // Navigation state defaults based on user's granted permissions
   const [activeTab, setActiveTab] = useState(() => {
@@ -53,6 +54,7 @@ function DashboardContent() {
   const [filters, setFilters] = useState({
     search: '',
     brand: 'All',
+    month: 'All',
     week: 'All',
     format: 'All',
     status: 'All',
@@ -106,6 +108,7 @@ function DashboardContent() {
     setFilters({
       search: '',
       brand: 'All',
+      month: 'All',
       week: 'All',
       format: 'All',
       status: 'All',
@@ -116,6 +119,42 @@ function DashboardContent() {
   const handleStatusCardClick = (status) => {
     setFilters(prev => ({ ...prev, status }));
   };
+
+  const handleDeleteActiveMonth = async (monthKey) => {
+    const found = availableMonths.find(m => m.key === monthKey);
+    const label = found ? found.label : monthKey;
+    const count = found ? found.count : 0;
+    if (window.confirm(`Are you sure you want to permanently delete all ${count} deliverables for ${label}? All other months will remain completely intact.`)) {
+      await deleteMonthDeliverables(monthKey, label);
+      handleFilterChange('month', 'All');
+    }
+  };
+
+  // Extract all available months from live deliverables
+  const availableMonths = useMemo(() => {
+    const map = {};
+    deliverables.forEach(d => {
+      if (d.date && /^\d{4}-\d{2}/.test(d.date)) {
+        const ym = d.date.slice(0, 7);
+        map[ym] = (map[ym] || 0) + 1;
+      }
+    });
+    return Object.keys(map).sort().map(ym => {
+      const [y, m] = ym.split('-').map(Number);
+      const d = new Date(y, m - 1, 1);
+      return {
+        key: ym,
+        label: d.toLocaleString('en-US', { month: 'long', year: 'numeric' }),
+        count: map[ym]
+      };
+    });
+  }, [deliverables]);
+
+  // Deliverables filtered by selected month (for scoped KPIs and stats)
+  const monthFilteredDeliverables = useMemo(() => {
+    if (!filters.month || filters.month === 'All') return deliverables;
+    return deliverables.filter(d => d.date && d.date.startsWith(filters.month));
+  }, [deliverables, filters.month]);
 
   // Modal openers
   const openNewDeliverable = (clientName = null, date = null) => {
@@ -148,6 +187,7 @@ function DashboardContent() {
   const filteredDeliverables = useMemo(() => {
     return deliverables.filter(item => {
       if (filters.brand !== 'All' && item.client !== filters.brand) return false;
+      if (filters.month && filters.month !== 'All' && !(item.date && item.date.startsWith(filters.month))) return false;
       if (filters.week !== 'All' && item.week !== filters.week) return false;
       if (filters.format !== 'All' && item.format !== filters.format) return false;
       if (filters.status !== 'All' && item.status !== filters.status) return false;
@@ -239,8 +279,71 @@ function DashboardContent() {
           {/* VIEW 3: MASTER PLANNER */}
           {activeTab === 'master' && (
             <div className="space-y-6 animate-fade-in">
-              {/* Top KPI Metrics Overview */}
-              <StatsOverview onFilterStatus={handleStatusCardClick} />
+              {/* Top KPI Metrics Overview (Scoped to selected month if chosen) */}
+              <StatsOverview
+                onFilterStatus={handleStatusCardClick}
+                customDeliverables={filters.month !== 'All' ? monthFilteredDeliverables : null}
+              />
+
+              {/* Month Quick-Pills Switcher (when multiple months exist in dataset) */}
+              {availableMonths.length > 1 && (
+                <div className="bg-white rounded-2xl p-2.5 sm:p-3 border border-slate-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-700 px-1">
+                    <Calendar className="w-4 h-4 text-orange-600" />
+                    <span>Select Month:</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => handleFilterChange('month', 'All')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        filters.month === 'All'
+                          ? 'bg-slate-900 text-white shadow-xs'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      All Months ({deliverables.length})
+                    </button>
+                    {availableMonths.map(m => (
+                      <button
+                        key={m.key}
+                        onClick={() => handleFilterChange('month', m.key)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          filters.month === m.key
+                            ? 'bg-orange-600 text-white shadow-xs'
+                            : 'bg-slate-100 hover:bg-orange-50 hover:text-orange-900 text-slate-700'
+                        }`}
+                      >
+                        <span>{m.label}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${
+                          filters.month === m.key ? 'bg-orange-700 text-white' : 'bg-slate-200 text-slate-600'
+                        }`}>
+                          {m.count}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                    {filters.month !== 'All' && (
+                      <button
+                        onClick={() => handleDeleteActiveMonth(filters.month)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-600 hover:text-white hover:bg-rose-600 border border-rose-200 hover:border-rose-600 rounded-xl transition-all cursor-pointer"
+                        title="Delete only this month's deliverables"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete Month Data</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setActiveTab('monthly-report')}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-orange-600 hover:bg-orange-50 rounded-xl transition-colors"
+                    >
+                      <BarChart3 className="w-3.5 h-3.5" />
+                      <span>Open Monthly Report</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Daily Operations Quick Pulse Banner */}
               <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 border border-orange-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
@@ -306,6 +409,19 @@ function DashboardContent() {
                   onEdit={openEditDeliverable}
                 />
               )}
+            </div>
+          )}
+
+          {/* VIEW: MONTHLY REPORT */}
+          {activeTab === 'monthly-report' && (
+            <div className="animate-fade-in">
+              <MonthlyReportView
+                onSelectTab={setActiveTab}
+                onFilterMonthInMaster={(monthYm) => {
+                  setFilters(prev => ({ ...prev, month: monthYm }));
+                  setActiveTab('master');
+                }}
+              />
             </div>
           )}
 

@@ -91,10 +91,10 @@ export function normalizeFormat(raw) {
  */
 export function normalizeStatus(raw) {
   const str = String(raw || '').toLowerCase().trim();
-  if (str.includes('sched')) return 'Scheduled';
-  if (str.includes('creat') || str.includes('prog') || str.includes('work')) return 'In Creation';
-  if (str.includes('post') || str.includes('done') || str.includes('live')) return 'Posted';
-  if (str.includes('plan')) return 'Planned';
+  if (str.includes('sched') || str.includes('ready') || str.includes('approved')) return 'Scheduled';
+  if (str.includes('creat') || str.includes('prog') || str.includes('work') || str.includes('edit')) return 'In Creation';
+  if (str.includes('post') || str.includes('done') || str.includes('live') || str.includes('publish')) return 'Posted';
+  if (str.includes('plan') || str.includes('not started') || str.includes('start') || str.includes('todo') || str.includes('queue') || str.includes('draft')) return 'Planned';
   return 'Planned'; // default
 }
 
@@ -109,49 +109,73 @@ export function parseExcelWorkbook(arrayBuffer) {
   const deliverables = [];
   const deliverablesByClient = {};
   const clientMap = new Map();
+  const seenDeliverables = new Map();
 
-  // Step 1: Check for Master Planner sheet to extract brand quotas
-  const masterSheetName = sheetNames.find(s => s.toLowerCase().includes('master') || s.toLowerCase().includes('quota') || s.toLowerCase().includes('summary'));
-  if (masterSheetName) {
-    const ws = wb.Sheets[masterSheetName];
+  // Step 1: Scan all sheets for client quotas table (Master, Dashboard, Summary, Overview, etc.)
+  for (const sheetName of sheetNames) {
+    const ws = wb.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+    if (!rows || rows.length === 0) continue;
 
-    for (let r = 0; r < rows.length; r++) {
-      const row = rows[r];
-      const firstCell = String(row[0] || '').trim().toLowerCase();
-      if (firstCell.includes('client name') || firstCell === 'client' || firstCell.includes('brand')) {
+    for (let r = 0; r < Math.min(30, rows.length); r++) {
+      const row = rows[r].map(c => String(c).trim().toLowerCase());
+      const hasClientCol = row.some(c => c === 'client' || c.includes('client name') || c === 'brand');
+      const hasPostsCol = row.some(c => c.includes('post'));
+      const hasReelsCol = row.some(c => c.includes('reel'));
+
+      // Quota table header found
+      if (hasClientCol && (hasPostsCol || hasReelsCol)) {
+        const clientColIdx = row.findIndex(c => c === 'client' || c.includes('client name') || c === 'brand');
+        const postsColIdx = row.findIndex(c => c.includes('post'));
+        const reelsColIdx = row.findIndex(c => c.includes('reel'));
+        const w1ColIdx = row.findIndex(c => /w(k|eek)?\s*1/i.test(c));
+        const w2ColIdx = row.findIndex(c => /w(k|eek)?\s*2/i.test(c));
+        const w3ColIdx = row.findIndex(c => /w(k|eek)?\s*3/i.test(c));
+        const w4ColIdx = row.findIndex(c => /w(k|eek)?\s*4/i.test(c));
+
         for (let cr = r + 1; cr < rows.length; cr++) {
           const clientRow = rows[cr];
-          const name = String(clientRow[0] || '').trim();
-          if (!name || name.toLowerCase().includes('total') || name.startsWith('=')) break;
+          if (!clientRow || clientRow.length === 0) continue;
+          const name = String(clientRow[clientColIdx] || '').trim();
+          if (!name || name.toLowerCase().includes('total') || name.startsWith('=') || name.toLowerCase().includes('schedule policy')) {
+            break;
+          }
 
-          const posts = parseInt(clientRow[1]) || 0;
-          const reels = parseInt(clientRow[2]) || 0;
-          const w1 = parseInt(clientRow[4]) || 0;
-          const w2 = parseInt(clientRow[5]) || 0;
-          const w3 = parseInt(clientRow[6]) || 0;
-          const w4 = parseInt(clientRow[7]) || 0;
+          const posts = postsColIdx !== -1 ? (parseInt(clientRow[postsColIdx]) || 0) : 0;
+          const reels = reelsColIdx !== -1 ? (parseInt(clientRow[reelsColIdx]) || 0) : 0;
+          const w1 = w1ColIdx !== -1 ? (parseInt(clientRow[w1ColIdx]) || 0) : 0;
+          const w2 = w2ColIdx !== -1 ? (parseInt(clientRow[w2ColIdx]) || 0) : 0;
+          const w3 = w3ColIdx !== -1 ? (parseInt(clientRow[w3ColIdx]) || 0) : 0;
+          const w4 = w4ColIdx !== -1 ? (parseInt(clientRow[w4ColIdx]) || 0) : 0;
 
-          const color = BRAND_COLORS[clients.length % BRAND_COLORS.length];
-          const clientObj = {
-            id: `c_${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`,
-            name,
-            color,
-            postsQuota: posts,
-            reelsQuota: reels,
-            weeks: [w1, w2, w3, w4]
-          };
-          clients.push(clientObj);
-          clientMap.set(name.toLowerCase(), clientObj);
+          const clientKey = name.toLowerCase();
+          if (!clientMap.has(clientKey)) {
+            const color = BRAND_COLORS[clients.length % BRAND_COLORS.length];
+            const clientObj = {
+              id: `c_${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`,
+              name,
+              color,
+              postsQuota: posts,
+              reelsQuota: reels,
+              weeks: [w1, w2, w3, w4]
+            };
+            clients.push(clientObj);
+            clientMap.set(clientKey, clientObj);
+          } else {
+            const existingClient = clientMap.get(clientKey);
+            if (posts > 0) existingClient.postsQuota = posts;
+            if (reels > 0) existingClient.reelsQuota = reels;
+          }
         }
         break;
       }
     }
+    if (clients.length > 0) break;
   }
 
   // Step 2: Iterate through all sheets to find Deliverables tables
   for (const sheetName of sheetNames) {
-    const isMaster = sheetName.toLowerCase().includes('master') || sheetName.toLowerCase().includes('summary');
+    const isMaster = sheetName.toLowerCase().includes('master') || sheetName.toLowerCase().includes('summary') || sheetName.toLowerCase().includes('all');
     const ws = wb.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
     if (!rows || rows.length === 0) continue;
@@ -163,20 +187,26 @@ export function parseExcelWorkbook(arrayBuffer) {
     for (let r = 0; r < Math.min(35, rows.length); r++) {
       const row = rows[r].map(c => String(c).trim().toLowerCase());
       const hasDate = row.some(c => c.includes('date'));
-      const hasTitle = row.some(c => c.includes('hook') || c.includes('title') || c.includes('content') || c.includes('angle') || c.includes('topic'));
+      const hasTitle = row.some(c => c.includes('title') || c.includes('hook') || c.includes('content') || c.includes('angle') || c.includes('topic'));
       const hasFormat = row.some(c => c.includes('content type') || c === 'format' || c === 'type');
 
       if ((hasDate && hasTitle) || (hasTitle && hasFormat)) {
         headerRowIdx = r;
         row.forEach((col, idx) => {
-          if (col.includes('client') || col.includes('brand')) colMap.client = idx;
-          else if (col.includes('date')) colMap.date = idx;
-          else if (col.includes('week')) colMap.week = idx;
-          else if (col.includes('content type') || col === 'format' || col === 'type') colMap.format = idx;
-          else if (col.includes('hook') || col.includes('title') || col.includes('creative angle') || col.includes('topic')) colMap.title = idx;
-          else if (col.includes('visual asset') || col.includes('asset') || col.includes('media')) colMap.asset = idx;
-          else if (col.includes('caption') || col.includes('message') || col.includes('copy')) colMap.caption = idx;
-          else if (col.includes('status')) colMap.status = idx;
+          const colClean = col.toLowerCase().trim();
+          if (colClean.includes('client') || colClean.includes('brand')) colMap.client = idx;
+          else if (colClean.includes('date') || colClean === 'publish date') colMap.date = idx;
+          else if (colClean.includes('week')) colMap.week = idx;
+          else if (colClean.includes('content type') || colClean === 'format' || colClean === 'type') colMap.format = idx;
+          else if (colClean.includes('caption') || colClean.includes('copy') || colClean.includes('message')) colMap.caption = idx;
+          else if (colClean.includes('title') || colClean.includes('headline') || colClean.includes('topic') || colClean === 'content') colMap.title = idx;
+          else if (colClean.includes('hook')) {
+            if (colMap.title === undefined) colMap.title = idx;
+            else if (colMap.caption === undefined) colMap.caption = idx;
+          }
+          else if (colClean.includes('shot list') || colClean.includes('brief') || colClean.includes('asset') || colClean.includes('media') || colClean.includes('visual')) colMap.asset = idx;
+          else if (colClean === 'cta' || colClean.includes('call to action')) colMap.cta = idx;
+          else if (colClean.includes('status')) colMap.status = idx;
         });
         break;
       }
@@ -184,7 +214,6 @@ export function parseExcelWorkbook(arrayBuffer) {
 
     // If table header found
     if (headerRowIdx !== -1 && colMap.title !== undefined) {
-      // If this is a client-specific sheet (not Master Planner)
       const inferredClient = isMaster ? null : sheetName.trim();
 
       for (let r = headerRowIdx + 1; r < rows.length; r++) {
@@ -192,7 +221,7 @@ export function parseExcelWorkbook(arrayBuffer) {
         if (!row || row.length === 0) continue;
 
         const titleVal = String(row[colMap.title] || '').trim();
-        // Ignore empty rows or divider rows
+        // Ignore empty rows, totals, or notes
         if (!titleVal || titleVal.toLowerCase().includes('total') || titleVal.startsWith('📅') || titleVal.startsWith('=')) {
           continue;
         }
@@ -217,8 +246,31 @@ export function parseExcelWorkbook(arrayBuffer) {
         // Format, Asset, Caption, Status
         const formatVal = normalizeFormat(colMap.format !== undefined ? row[colMap.format] : '');
         const assetVal = colMap.asset !== undefined ? String(row[colMap.asset] || '').trim() : '';
-        const captionVal = colMap.caption !== undefined ? String(row[colMap.caption] || '').trim() : '';
+        
+        let captionVal = colMap.caption !== undefined ? String(row[colMap.caption] || '').trim() : '';
+        if (colMap.cta !== undefined && row[colMap.cta]) {
+          const ctaVal = String(row[colMap.cta]).trim();
+          if (ctaVal && !captionVal.toLowerCase().includes(ctaVal.toLowerCase())) {
+            captionVal = captionVal ? `${captionVal} • [CTA: ${ctaVal}]` : ctaVal;
+          }
+        }
+
         const statusVal = normalizeStatus(colMap.status !== undefined ? row[colMap.status] : '');
+
+        // Deduplication signature across multiple sheets
+        const normTitle = titleVal.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const dedupeKey = `${rowClient.toLowerCase().trim()}|${dateStr}|${formatVal}|${normTitle}`;
+
+        if (seenDeliverables.has(dedupeKey)) {
+          // Deliverable already captured from another sheet (e.g. Master vs Client tab)
+          // Enrich any missing caption or asset information and skip duplicate!
+          const existingItem = seenDeliverables.get(dedupeKey);
+          if (existingItem) {
+            if (!existingItem.caption && captionVal) existingItem.caption = captionVal;
+            if ((!existingItem.asset || existingItem.asset.includes('Asset')) && assetVal) existingItem.asset = assetVal;
+          }
+          continue; // Skip duplicate!
+        }
 
         const item = {
           id: `d_${rowClient.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${r}_${Math.random().toString(36).slice(2, 6)}`,
@@ -232,6 +284,7 @@ export function parseExcelWorkbook(arrayBuffer) {
           status: statusVal
         };
 
+        seenDeliverables.set(dedupeKey, item);
         deliverables.push(item);
 
         if (!deliverablesByClient[rowClient]) {
@@ -258,12 +311,14 @@ export function parseExcelWorkbook(arrayBuffer) {
     }
   }
 
-  // Update client quotas dynamically if client was not in Master Planner
+  // Step 3: Update client quotas dynamically if client was not in quota table
   clients.forEach(c => {
     const items = deliverablesByClient[c.name] || [];
     if (c.postsQuota === 0 && c.reelsQuota === 0 && items.length > 0) {
       c.postsQuota = items.filter(i => i.format === 'Post').length;
       c.reelsQuota = items.filter(i => i.format === 'Reel').length;
+    }
+    if (!c.weeks || c.weeks.every(w => w === 0)) {
       c.weeks = [
         items.filter(i => i.week === 'Week 1').length,
         items.filter(i => i.week === 'Week 2').length,

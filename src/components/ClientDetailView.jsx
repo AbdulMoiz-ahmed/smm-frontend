@@ -11,6 +11,7 @@ export default function ClientDetailView({ clientId, onEditDeliverable, onNewDel
   const [viewMode, setViewMode] = useState('grid');
   const [filters, setFilters] = useState({
     search: '',
+    month: 'All',
     week: 'All',
     format: 'All',
     status: 'All'
@@ -53,6 +54,7 @@ export default function ClientDetailView({ clientId, onEditDeliverable, onNewDel
   // Filtered deliverables
   const filteredDeliverables = useMemo(() => {
     return clientDeliverables.filter(item => {
+      if (filters.month !== 'All' && !(item.date && item.date.startsWith(filters.month))) return false;
       if (filters.week !== 'All' && item.week !== filters.week) return false;
       if (filters.format !== 'All' && item.format !== filters.format) return false;
       if (filters.status !== 'All' && item.status !== filters.status) return false;
@@ -72,7 +74,7 @@ export default function ClientDetailView({ clientId, onEditDeliverable, onNewDel
   };
 
   const handleResetFilters = () => {
-    setFilters({ search: '', week: 'All', format: 'All', status: 'All' });
+    setFilters({ search: '', month: 'All', week: 'All', format: 'All', status: 'All' });
   };
 
   if (!client) {

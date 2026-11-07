@@ -102,6 +102,7 @@ export function AuthProvider({ children }) {
     if (tab === 'daily') return hasPermission('view_daily');
     if (tab === 'calendar') return hasPermission('view_calendar');
     if (tab === 'master') return hasPermission('view_master');
+    if (tab === 'monthly-report') return hasPermission('view_master') || hasPermission('view_quotas');
     if (tab === 'quotas') return hasPermission('view_quotas');
     if (tab === 'clients') return hasPermission('manage_brands');
     if (tab === 'team') return hasPermission('manage_team');

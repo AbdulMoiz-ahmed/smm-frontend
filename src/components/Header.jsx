@@ -22,6 +22,7 @@ export default function Header({
     if (activeTab === 'daily') return "Today's Tasks & Backlog Deck";
     if (activeTab === 'calendar') return "Content Schedule & Calendar";
     if (activeTab === 'master') return "Master Content Planner";
+    if (activeTab === 'monthly-report') return "Monthly Deliverables & Performance Report";
     if (activeTab === 'quotas') return "Client Quota Matrix";
     if (activeTab === 'clients') return "Client Brand Manager";
     if (activeTab === 'team') return "Team & Role Access Management";

@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { usePlanner } from '../context/PlannerContext';
 import { CheckCircle2, Clock, Calendar, CheckCheck, Video, Image as ImageIcon, TrendingUp } from 'lucide-react';
 
-export default function StatsOverview({ onFilterStatus }) {
-  const { stats, deliverables } = usePlanner();
+export default function StatsOverview({ onFilterStatus, customDeliverables, titlePrefix = 'Total Pipeline' }) {
+  const { stats: contextStats, deliverables: contextDeliverables } = usePlanner();
+
+  const deliverables = customDeliverables || contextDeliverables;
+
+  const stats = useMemo(() => {
+    if (!customDeliverables) return contextStats;
+    const total = deliverables.length;
+    const scheduled = deliverables.filter(d => d.status === 'Scheduled').length;
+    const inCreation = deliverables.filter(d => d.status === 'In Creation').length;
+    const planned = deliverables.filter(d => d.status === 'Planned').length;
+    const posted = deliverables.filter(d => d.status === 'Posted').length;
+    const reels = deliverables.filter(d => d.format === 'Reel').length;
+    const posts = deliverables.filter(d => d.format === 'Post').length;
+    return { total, scheduled, inCreation, planned, posted, reels, posts };
+  }, [deliverables, customDeliverables, contextStats]);
 
   const total = deliverables.length;
   const scheduledPercent = total > 0 ? Math.round((stats.scheduled / total) * 100) : 0;

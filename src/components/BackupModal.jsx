@@ -1,12 +1,47 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { usePlanner } from '../context/PlannerContext';
-import { X, Download, Upload, FileSpreadsheet, RotateCcw, AlertTriangle } from 'lucide-react';
+import { X, Download, Upload, FileSpreadsheet, RotateCcw, AlertTriangle, Trash2, Calendar } from 'lucide-react';
 
 export default function BackupModal({ isOpen, onClose }) {
-  const { exportData, importData, exportCSV, resetData, clients, deliverables, dbType } = usePlanner();
+  const { exportData, importData, exportCSV, resetData, deleteMonthDeliverables, clients, deliverables, dbType } = usePlanner();
   const fileInputRef = useRef(null);
 
+  // Extract all available months from deliverables
+  const availableMonths = useMemo(() => {
+    const map = {};
+    deliverables.forEach(d => {
+      if (d.date && /^\d{4}-\d{2}/.test(d.date)) {
+        const ym = d.date.slice(0, 7);
+        map[ym] = (map[ym] || 0) + 1;
+      }
+    });
+    return Object.keys(map).sort().map(ym => {
+      const [y, m] = ym.split('-').map(Number);
+      const d = new Date(y, m - 1, 1);
+      return {
+        key: ym,
+        label: d.toLocaleString('en-US', { month: 'long', year: 'numeric' }),
+        count: map[ym]
+      };
+    });
+  }, [deliverables]);
+
+  const [selectedMonthToDelete, setSelectedMonthToDelete] = useState(() => {
+    return availableMonths.length > 0 ? availableMonths[0].key : '';
+  });
+
   if (!isOpen) return null;
+
+  const handleDeleteMonth = async () => {
+    if (!selectedMonthToDelete) return;
+    const found = availableMonths.find(m => m.key === selectedMonthToDelete);
+    const label = found ? found.label : selectedMonthToDelete;
+    const count = found ? found.count : 0;
+    if (window.confirm(`Are you sure you want to delete all ${count} deliverables for ${label}? All other months will remain completely safe.`)) {
+      await deleteMonthDeliverables(selectedMonthToDelete, label);
+      onClose();
+    }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -117,6 +152,42 @@ export default function BackupModal({ isOpen, onClose }) {
               </button>
             </div>
           </div>
+
+          {/* Delete Single Month Data */}
+          {availableMonths.length > 0 && (
+            <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 className="font-bold text-amber-950 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-amber-600" />
+                  Delete Single Month's Data
+                </h4>
+                <p className="text-amber-700 text-[11px]">
+                  Safely remove only deliverables from a specific month without touching other months.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <select
+                  value={selectedMonthToDelete}
+                  onChange={e => setSelectedMonthToDelete(e.target.value)}
+                  className="px-2.5 py-1.5 text-xs bg-white border border-amber-300 rounded-lg text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                >
+                  {availableMonths.map(m => (
+                    <option key={m.key} value={m.key}>
+                      {m.label} ({m.count} items)
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={handleDeleteMonth}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold bg-amber-600 hover:bg-amber-700 text-white transition-all active:scale-95 shrink-0 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete Month</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Reset Danger Zone */}
           <div className="bg-rose-50/70 p-4 rounded-xl border border-rose-200 flex items-center justify-between gap-3">

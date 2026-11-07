@@ -11,11 +11,12 @@ import {
   Image as ImageIcon,
   RefreshCw,
   Search,
-  Database
+  Database,
+  RotateCcw
 } from 'lucide-react';
 
 export default function ExcelImportModal({ isOpen, onClose }) {
-  const { importData, dbType } = usePlanner();
+  const { importData, resetData, dbType } = usePlanner();
 
   const fileInputRef = useRef(null);
   const [file, setFile] = useState(null);
@@ -184,8 +185,9 @@ export default function ExcelImportModal({ isOpen, onClose }) {
         <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
           {/* Step 1: Upload Dropzone if no file selected */}
           {!parsedData ? (
-            <div
-              onDrop={handleDrop}
+            <>
+              <div
+                onDrop={handleDrop}
               onDragOver={handleDragOver}
               className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center transition-all cursor-pointer ${
                 isProcessing
@@ -229,6 +231,36 @@ export default function ExcelImportModal({ isOpen, onClose }) {
                 </div>
               )}
             </div>
+
+            {/* Revert / Undo Assistant */}
+            <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 rounded-xl bg-rose-100 text-rose-700 shrink-0">
+                  <RotateCcw className="w-4 h-4" />
+                </span>
+                <div>
+                  <span className="font-bold text-slate-900">Imported the wrong file or need to revert?</span>
+                  <p className="text-slate-500 text-[11px] mt-0.5">
+                    Reset your workspace back to the clean default 5 master brands with 1 click.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm('Reset all deliverables and clients back to original default master dataset? All custom edits will be reverted.')) {
+                    resetData();
+                    onClose();
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 shrink-0 transition-colors active:scale-95 cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset to Default Data</span>
+              </button>
+            </div>
+          </>
           ) : (
             /* Step 2: Config and Preview */
             <div className="space-y-5">
