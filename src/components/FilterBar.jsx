@@ -9,7 +9,8 @@ export default function FilterBar({
   viewMode,
   onViewModeChange,
   showBrandFilter = true,
-  showMonthFilter = true
+  showMonthFilter = true,
+  resultCount
 }) {
   const { clients, deliverables, roleRestrictedFormat } = usePlanner();
 
@@ -60,13 +61,14 @@ export default function FilterBar({
     (filters.datePreset && filters.datePreset !== 'All');
 
   return (
-    <div className="bg-white rounded-xl p-3 border border-slate-200/90 shadow-soft mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+    <section aria-label="Search and filter deliverables" className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
       {/* Search and Dropdowns */}
       <div className="flex flex-wrap items-center gap-2.5 flex-1">
         {/* Search Input */}
         <div className="relative min-w-[200px] flex-1 sm:max-w-xs">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
+            aria-label="Search deliverables"
             type="text"
             placeholder="Search titles, captions, specs..."
             value={filters.search}
@@ -74,7 +76,9 @@ export default function FilterBar({
             className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-slate-800 placeholder-slate-400 transition-all"
           />
           {filters.search && (
-            <button
+              <button
+                type="button"
+                aria-label="Clear search"
               onClick={() => onFilterChange('search', '')}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
             >
@@ -86,6 +90,7 @@ export default function FilterBar({
         {/* Brand Filter */}
         {showBrandFilter && (
           <select
+            aria-label="Filter by brand"
             value={filters.brand}
             onChange={e => onFilterChange('brand', e.target.value)}
             className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
@@ -102,6 +107,7 @@ export default function FilterBar({
         {/* Dynamic Month Filter */}
         {showMonthFilter && availableMonths.length > 0 && (
           <select
+            aria-label="Filter by month"
             value={filters.month || 'All'}
             onChange={e => onFilterChange('month', e.target.value)}
             className={`px-2.5 py-1.5 text-xs rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer ${
@@ -121,6 +127,7 @@ export default function FilterBar({
 
         {/* Dynamic Week Filter */}
         <select
+          aria-label="Filter by week"
           value={filters.week}
           onChange={e => onFilterChange('week', e.target.value)}
           className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
@@ -140,6 +147,7 @@ export default function FilterBar({
           </div>
         ) : (
           <select
+            aria-label="Filter by format"
             value={filters.format}
             onChange={e => onFilterChange('format', e.target.value)}
             className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
@@ -152,6 +160,7 @@ export default function FilterBar({
 
         {/* Status Filter */}
         <select
+          aria-label="Filter by status"
           value={filters.status}
           onChange={e => onFilterChange('status', e.target.value)}
           className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
@@ -165,6 +174,7 @@ export default function FilterBar({
 
         {/* Quick Date Scope Filter */}
         <select
+          aria-label="Filter by date"
           value={filters.datePreset || 'All'}
           onChange={e => onFilterChange('datePreset', e.target.value)}
           className={`px-2.5 py-1.5 text-xs rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 cursor-pointer ${
@@ -183,6 +193,8 @@ export default function FilterBar({
         {/* Reset Filter Button */}
         {hasActiveFilters && (
           <button
+            type="button"
+            aria-label="Clear all filters"
             onClick={onResetFilters}
             className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors"
           >
@@ -193,7 +205,9 @@ export default function FilterBar({
       </div>
 
       {/* View Switcher (Grid, Table, Kanban) */}
-      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 self-end lg:self-center">
+      <div className="flex items-center justify-between gap-3 self-stretch lg:self-center">
+        {typeof resultCount === 'number' && <p className="text-xs text-slate-500 whitespace-nowrap"><span className="font-semibold text-slate-700">{resultCount}</span> deliverables</p>}
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
         <button
           onClick={() => onViewModeChange('grid')}
           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
@@ -232,7 +246,8 @@ export default function FilterBar({
           <Kanban className="w-3.5 h-3.5" />
           <span>Kanban</span>
         </button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

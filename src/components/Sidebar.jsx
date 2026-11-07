@@ -59,22 +59,22 @@ export default function Sidebar({
 
       {/* Main Sidebar Element */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen z-50 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col transition-all duration-300 ease-in-out shadow-xl ${
+          className={`fixed lg:sticky top-0 left-0 h-screen z-50 bg-white border-r border-slate-200 text-slate-700 flex flex-col transition-all duration-300 ease-in-out shadow-xl shadow-slate-900/5 ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Top Header / Brand Logo */}
-        <div className="h-16 px-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900/90">
+        <div className="h-20 px-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-black text-xl shrink-0">
-              CP
+            <div className="w-10 h-10 rounded-2xl bg-slate-950 flex items-center justify-center shadow-lg shadow-slate-900/15 text-white font-black text-sm shrink-0 tracking-tight">
+              <span className="text-orange-400">C</span>P
             </div>
             {!isCollapsed && (
               <div className="leading-tight truncate">
-                <div className="font-extrabold text-sm text-white tracking-tight flex items-center gap-1.5">
+                <div className="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-1.5">
                   <span>Content Planner</span>
                 </div>
-                <div className="text-[10px] text-orange-400 font-medium truncate flex items-center gap-1">
+                <div className="text-[10px] text-slate-500 font-medium truncate flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                   <span>FastAPI + MongoDB</span>
                 </div>
@@ -84,7 +84,7 @@ export default function Sidebar({
 
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -92,7 +92,7 @@ export default function Sidebar({
         </div>
 
         {/* Navigation Content (Scrollable) */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
+          <div className="flex-1 overflow-y-auto p-3 space-y-6 scrollbar-thin scrollbar-thumb-slate-200">
           {/* SECTION 1: WORKSPACE TABS */}
           <div className="space-y-1">
             {!isCollapsed && (
@@ -110,18 +110,18 @@ export default function Sidebar({
                 onClick={() => handleNavClick('daily')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'daily'
-                    ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                    ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                 }`}
                 title="Today's Tasks & Backlog Deck"
               >
-                <Clock className={`w-4 h-4 shrink-0 ${activeTab === 'daily' ? 'text-white' : 'text-orange-400'}`} />
+                <Clock className={`w-4 h-4 shrink-0 ${activeTab === 'daily' ? 'text-orange-700' : 'text-orange-500'}`} />
                 {!isCollapsed && (
                   <div className="flex-1 flex items-center justify-between">
                     <span>Today's Tasks</span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
                       activeTab === 'daily'
-                        ? 'bg-orange-700 text-white'
+                        ? 'bg-orange-100 text-orange-800'
                         : pendingTillTodayCount > 0
                         ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                         : 'bg-emerald-500/20 text-emerald-300'
@@ -139,12 +139,12 @@ export default function Sidebar({
                 onClick={() => handleNavClick('calendar')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'calendar'
-                    ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                    ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                 }`}
                 title="Posts Calendar View"
               >
-                <Calendar className={`w-4 h-4 shrink-0 ${activeTab === 'calendar' ? 'text-white' : 'text-sky-400'}`} />
+                <Calendar className={`w-4 h-4 shrink-0 ${activeTab === 'calendar' ? 'text-orange-700' : 'text-sky-500'}`} />
                 {!isCollapsed && (
                   <div className="flex-1 flex items-center justify-between">
                     <span>Posts Calendar</span>
@@ -160,17 +160,17 @@ export default function Sidebar({
                 onClick={() => handleNavClick('master')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'master'
-                    ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                    ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                 }`}
                 title="Master Content Planner"
               >
-                <Layers className={`w-4 h-4 shrink-0 ${activeTab === 'master' ? 'text-white' : 'text-emerald-400'}`} />
+                <Layers className={`w-4 h-4 shrink-0 ${activeTab === 'master' ? 'text-orange-700' : 'text-emerald-500'}`} />
                 {!isCollapsed && (
                   <div className="flex-1 flex items-center justify-between">
                     <span>Master Planner</span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      activeTab === 'master' ? 'bg-orange-700 text-white' : 'bg-slate-800 text-slate-400'
+                      activeTab === 'master' ? 'bg-orange-100 text-orange-800' : 'bg-slate-100 text-slate-500'
                     }`}>
                       {deliverables.length}
                     </span>
@@ -185,12 +185,12 @@ export default function Sidebar({
                 onClick={() => handleNavClick('monthly-report')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'monthly-report'
-                    ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                    ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                 }`}
                 title="Monthly Deliverables & Performance Report"
               >
-                <BarChart3 className={`w-4 h-4 shrink-0 ${activeTab === 'monthly-report' ? 'text-white' : 'text-amber-400'}`} />
+                <BarChart3 className={`w-4 h-4 shrink-0 ${activeTab === 'monthly-report' ? 'text-orange-700' : 'text-amber-500'}`} />
                 {!isCollapsed && (
                   <div className="flex-1 flex items-center justify-between">
                     <span>Monthly Report</span>
@@ -207,13 +207,15 @@ export default function Sidebar({
           {hasPermission('view_brands') && (
             <div className="space-y-1">
               {!isCollapsed && (
-                <div 
+                <button
+                  type="button"
                   onClick={() => setBrandsExpanded(!brandsExpanded)}
-                  className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1 flex items-center justify-between cursor-pointer hover:text-slate-300 select-none"
+                  aria-expanded={brandsExpanded}
+                  className="w-full text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1 flex items-center justify-between hover:text-slate-700 select-none"
                 >
                   <span>Client Brands ({visibleClients.length})</span>
                   {brandsExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                </div>
+                </button>
               )}
 
               {(brandsExpanded || isCollapsed) && (
@@ -229,19 +231,19 @@ export default function Sidebar({
                         onClick={() => handleNavClick(`client-${c.id}`)}
                         className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs transition-all ${
                           isSelected
-                            ? 'bg-slate-800 text-white font-bold ring-1 ring-orange-500/40'
-                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                            ? 'bg-orange-50 text-orange-800 font-bold ring-1 ring-orange-100'
+                            : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                         }`}
                         title={`${c.name} (${count} items)`}
                       >
                         <span 
-                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs ring-2 ring-slate-900" 
+                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs ring-2 ring-white"
                           style={{ backgroundColor: color }}
                         />
                         {!isCollapsed && (
                           <div className="flex-1 flex items-center justify-between truncate">
                             <span className="truncate">{c.name}</span>
-                            <span className="text-[10px] text-slate-400 px-1.5 py-0.2 rounded bg-slate-800/60 font-semibold">
+                            <span className="text-[10px] text-slate-500 px-1.5 py-0.2 rounded bg-slate-100 font-semibold">
                               {count}
                             </span>
                           </div>
@@ -270,12 +272,12 @@ export default function Sidebar({
                   onClick={() => handleNavClick('quotas')}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     activeTab === 'quotas'
-                      ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                      ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                   }`}
                   title="Quota vs Delivered Matrix"
                 >
-                  <Table2 className={`w-4 h-4 shrink-0 ${activeTab === 'quotas' ? 'text-white' : 'text-amber-400'}`} />
+                  <Table2 className={`w-4 h-4 shrink-0 ${activeTab === 'quotas' ? 'text-orange-700' : 'text-amber-500'}`} />
                   {!isCollapsed && <span>Quota Matrix</span>}
                 </button>
               )}
@@ -286,12 +288,12 @@ export default function Sidebar({
                   onClick={() => handleNavClick('clients')}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     activeTab === 'clients'
-                      ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                      ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                   }`}
                   title="Manage Client Accounts & Quotas"
                 >
-                  <Building2 className={`w-4 h-4 shrink-0 ${activeTab === 'clients' ? 'text-white' : 'text-violet-400'}`} />
+                  <Building2 className={`w-4 h-4 shrink-0 ${activeTab === 'clients' ? 'text-orange-700' : 'text-violet-500'}`} />
                   {!isCollapsed && <span>Manage Brands</span>}
                 </button>
               )}
@@ -302,12 +304,12 @@ export default function Sidebar({
                   onClick={() => handleNavClick('team')}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     activeTab === 'team'
-                      ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                      ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                   }`}
                   title="Multi-Account Team & Permissions"
                 >
-                  <Users className={`w-4 h-4 shrink-0 ${activeTab === 'team' ? 'text-white' : 'text-rose-400'}`} />
+                  <Users className={`w-4 h-4 shrink-0 ${activeTab === 'team' ? 'text-orange-700' : 'text-rose-500'}`} />
                   {!isCollapsed && (
                     <div className="flex-1 flex items-center justify-between">
                       <span>Team & Roles</span>
@@ -324,12 +326,12 @@ export default function Sidebar({
                 onClick={() => handleNavClick('logs')}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'logs'
-                    ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                    ? 'bg-orange-50 text-orange-800 ring-1 ring-orange-100 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
                 }`}
                 title="System Activity & Audit Logs"
               >
-                <ScrollText className={`w-4 h-4 shrink-0 ${activeTab === 'logs' ? 'text-white' : 'text-emerald-400'}`} />
+                <ScrollText className={`w-4 h-4 shrink-0 ${activeTab === 'logs' ? 'text-orange-700' : 'text-emerald-500'}`} />
                 {!isCollapsed && (
                   <div className="flex-1 flex items-center justify-between">
                     <span>Activity Logs</span>
@@ -344,21 +346,21 @@ export default function Sidebar({
 
           {/* SECTION 4: DATA TOOLS */}
           {hasPermission('data_backup') && !isCollapsed && (
-            <div className="space-y-1 pt-2 border-t border-slate-800">
+            <div className="space-y-1 pt-2 border-t border-slate-100">
               <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1">
                 Data Tools
               </div>
               <div className="grid grid-cols-2 gap-1.5 px-1">
                 <button
                   onClick={onOpenImportExcel}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700/80 transition-all active:scale-95"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-slate-50 hover:bg-emerald-50 text-emerald-700 border border-slate-200 transition-all active:scale-95"
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
                   <span>Import Excel</span>
                 </button>
                 <button
                   onClick={exportCSV}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-all active:scale-95"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all active:scale-95"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Export CSV</span>
@@ -369,11 +371,11 @@ export default function Sidebar({
         </div>
 
         {/* Bottom User Profile & Switcher */}
-        <div className="p-3 border-t border-slate-800 bg-slate-900/95 relative shrink-0">
+        <div className="p-3 border-t border-slate-100 bg-white relative shrink-0">
           {/* User Popover Menu */}
           {showUserMenu && !isCollapsed && (
-            <div className="absolute bottom-full left-3 right-3 mb-2 bg-slate-800/95 backdrop-blur-md border border-slate-700 rounded-2xl p-3.5 shadow-2xl space-y-3 z-50 animate-scale-up">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider pb-1.5 border-b border-slate-700/80 flex items-center justify-between">
+            <div className="absolute bottom-full left-3 right-3 mb-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl p-3.5 shadow-2xl space-y-3 z-50 animate-scale-up">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider pb-1.5 border-b border-slate-100 flex items-center justify-between">
                 <span>Account Profile</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold border ${roleMeta.badgeClasses}`}>
                   {roleMeta.name}
@@ -381,20 +383,20 @@ export default function Sidebar({
               </div>
 
               <div className="space-y-1">
-                <div className="text-xs font-bold text-white truncate">{user?.name}</div>
-                <div className="text-[11px] text-slate-400 truncate">{user?.email}</div>
+                <div className="text-xs font-bold text-slate-900 truncate">{user?.name}</div>
+                <div className="text-[11px] text-slate-500 truncate">{user?.email}</div>
                 <div className="text-[10px] text-orange-400/90 font-medium pt-0.5 truncate">
                   {user?.title || roleMeta.defaultTitle}
                 </div>
               </div>
 
-              <div className="border-t border-slate-700/80 pt-2 space-y-1.5">
+              <div className="border-t border-slate-100 pt-2 space-y-1.5">
                 <button
                   onClick={() => {
                     setShowUserMenu(false);
                     logout();
                   }}
-                  className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold bg-slate-700/50 hover:bg-slate-700 text-slate-200 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors text-left"
                 >
                   <div className="flex items-center gap-2">
                     <LogOut className="w-3.5 h-3.5 text-orange-400" />
@@ -404,7 +406,7 @@ export default function Sidebar({
 
                 <button
                   onClick={logout}
-                  className="w-full flex items-center gap-2 p-2 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/15 transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Sign Out</span>
@@ -417,10 +419,10 @@ export default function Sidebar({
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex-1 flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-800 transition-colors text-left overflow-hidden group"
+              className="flex-1 flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-50 transition-colors text-left overflow-hidden group"
               title="Click to switch role or view profile"
             >
-              <div className="w-9 h-9 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shrink-0">
+              <div className="w-9 h-9 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                 <img 
                   src={user?.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${user?.name || 'User'}`} 
                   alt={user?.name} 
@@ -429,10 +431,10 @@ export default function Sidebar({
               </div>
               {!isCollapsed && (
                 <div className="truncate flex-1">
-                  <div className="text-xs font-bold text-white truncate">
+                  <div className="text-xs font-bold text-slate-900 truncate">
                     {user?.name || 'Authenticated User'}
                   </div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5 truncate">
+                  <div className="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5 truncate">
                     <span className="font-semibold text-orange-400">
                       {user?.title || roleMeta.name}
                     </span>
@@ -444,7 +446,7 @@ export default function Sidebar({
             {!isCollapsed && (
               <button
                 onClick={logout}
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-slate-50 transition-colors"
                 title="Sign out"
               >
                 <LogOut className="w-4 h-4" />

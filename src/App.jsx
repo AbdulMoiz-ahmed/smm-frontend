@@ -22,7 +22,7 @@ import ExcelImportModal from './components/ExcelImportModal';
 import AuditLogsView from './components/AuditLogsView';
 import MonthlyReportView from './components/MonthlyReportView';
 import Toast from './components/Toast';
-import { Clock, ArrowRight, ShieldAlert, Calendar, BarChart3, Trash2 } from 'lucide-react';
+import { Clock, ArrowRight, ShieldAlert, Calendar, BarChart3, Trash2, Sparkles } from 'lucide-react';
 
 function DashboardContent() {
   const { user, isAuthenticated, isLoadingAuth, isAdmin, hasPermission, canAccessTab } = useAuth();
@@ -279,6 +279,32 @@ function DashboardContent() {
           {/* VIEW 3: MASTER PLANNER */}
           {activeTab === 'master' && (
             <div className="space-y-6 animate-fade-in">
+              <section className="relative overflow-hidden rounded-[28px] bg-slate-950 px-6 py-7 text-white shadow-xl shadow-slate-900/10 sm:px-8 sm:py-8">
+                <div className="pointer-events-none absolute -right-12 -top-24 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl" />
+                <div className="pointer-events-none absolute right-32 bottom-[-7rem] h-56 w-56 rounded-full bg-amber-400/10 blur-3xl" />
+                <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                  <div className="max-w-2xl">
+                    <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-[11px] font-semibold text-orange-200">
+                      <Sparkles className="h-3.5 w-3.5" /> YOUR CONTENT WORKSPACE
+                    </div>
+                    <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Your content, at a glance.</h2>
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Plan what’s next, keep an eye on today’s work, and track every brand from one place.</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2.5">
+                    <button onClick={() => setActiveTab('daily')} className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/[0.14]">
+                      <Clock className="h-4 w-4 text-orange-300" /> Today’s tasks
+                    </button>
+                    <button onClick={() => openNewDeliverable()} className="inline-flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-orange-950/30 transition hover:bg-orange-400">
+                      <span className="text-lg leading-none">+</span> Create deliverable
+                    </button>
+                  </div>
+                </div>
+                <div className="relative mt-7 grid grid-cols-1 gap-3 border-t border-white/10 pt-5 sm:grid-cols-3">
+                  <div className="rounded-2xl bg-white/[0.06] px-4 py-3"><div className="text-xs text-slate-400">Needs attention</div><div className="mt-1 text-xl font-semibold text-white">{dailyPulse.pendingTillToday}<span className="ml-2 text-xs font-medium text-slate-400">overdue or due</span></div></div>
+                  <div className="rounded-2xl bg-white/[0.06] px-4 py-3"><div className="text-xs text-slate-400">Scheduled today</div><div className="mt-1 text-xl font-semibold text-white">{dailyPulse.dueToday}<span className="ml-2 text-xs font-medium text-slate-400">deliverables</span></div></div>
+                  <div className="rounded-2xl bg-white/[0.06] px-4 py-3"><div className="text-xs text-slate-400">Coming tomorrow</div><div className="mt-1 text-xl font-semibold text-white">{dailyPulse.tomorrowCount}<span className="ml-2 text-xs font-medium text-slate-400">deliverables</span></div></div>
+                </div>
+              </section>
               {/* Top KPI Metrics Overview (Scoped to selected month if chosen) */}
               <StatsOverview
                 onFilterStatus={handleStatusCardClick}
@@ -345,37 +371,6 @@ function DashboardContent() {
                 </div>
               )}
 
-              {/* Daily Operations Quick Pulse Banner */}
-              <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 border border-orange-200/90 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-                <div className="flex items-center gap-3">
-                  <span className="p-2.5 rounded-xl bg-orange-600 text-white shadow-sm shrink-0">
-                    <Clock className="w-4 h-4" />
-                  </span>
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                      <span>Daily Post Maintenance & Backlog</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded font-bold bg-orange-100 text-orange-800 border border-orange-200">
-                        {dailyPulse.todayStr}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-600 mt-0.5">
-                      <strong className="text-amber-800 font-bold">{dailyPulse.pendingTillToday} pending till today</strong>
-                      <span className="mx-1.5">•</span>
-                      <span>{dailyPulse.dueToday} scheduled today</span>
-                      <span className="mx-1.5">•</span>
-                      <span>{dailyPulse.tomorrowCount} upcoming tomorrow</span>
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveTab('daily')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-xs transition-all active:scale-95 shrink-0"
-                >
-                  <span>Open Daily Tasks Deck</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
               {/* Filter and View Layout Toolbar */}
               <FilterBar
                 filters={filters}
@@ -384,6 +379,7 @@ function DashboardContent() {
                 viewMode={viewMode}
                 onViewModeChange={setViewMode}
                 showBrandFilter={true}
+                resultCount={filteredDeliverables.length}
               />
 
               {/* Deliverables Output */}

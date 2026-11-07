@@ -16,7 +16,7 @@ export default function StatsOverview({ onFilterStatus, customDeliverables, titl
     const posted = deliverables.filter(d => d.status === 'Posted').length;
     const reels = deliverables.filter(d => d.format === 'Reel').length;
     const posts = deliverables.filter(d => d.format === 'Post').length;
-    return { total, scheduled, inCreation, planned, posted, reels, posts };
+    return { total, scheduled, inCreation, planned, posted, reels, posts, totalQuota: contextStats.totalQuota };
   }, [deliverables, customDeliverables, contextStats]);
 
   const total = deliverables.length;
@@ -50,7 +50,9 @@ export default function StatsOverview({ onFilterStatus, customDeliverables, titl
       {/* 2. Scheduled */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('Scheduled')}
-        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-soft hover:shadow-card hover:border-emerald-300 transition-all cursor-pointer group"
+        role="button" tabIndex={0} aria-label={`Filter to ${stats.scheduled} scheduled deliverables`}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFilterStatus?.('Scheduled'); } }}
+        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <div className="flex items-center justify-between text-xs text-emerald-700 font-medium mb-1.5">
           <span>Scheduled</span>
@@ -68,7 +70,9 @@ export default function StatsOverview({ onFilterStatus, customDeliverables, titl
       {/* 3. In Creation */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('In Creation')}
-        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-soft hover:shadow-card hover:border-amber-300 transition-all cursor-pointer group"
+        role="button" tabIndex={0} aria-label={`Filter to ${stats.inCreation} deliverables in creation`}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFilterStatus?.('In Creation'); } }}
+        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
       >
         <div className="flex items-center justify-between text-xs text-amber-700 font-medium mb-1.5">
           <span>In Creation</span>
@@ -86,7 +90,9 @@ export default function StatsOverview({ onFilterStatus, customDeliverables, titl
       {/* 4. Planned */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('Planned')}
-        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-soft hover:shadow-card hover:border-purple-300 transition-all cursor-pointer group"
+        role="button" tabIndex={0} aria-label={`Filter to ${stats.planned} planned deliverables`}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFilterStatus?.('Planned'); } }}
+        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-purple-300 transition-all cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
       >
         <div className="flex items-center justify-between text-xs text-purple-700 font-medium mb-1.5">
           <span>Planned</span>
@@ -104,7 +110,9 @@ export default function StatsOverview({ onFilterStatus, customDeliverables, titl
       {/* 5. Posted */}
       <div 
         onClick={() => onFilterStatus && onFilterStatus('Posted')}
-        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-soft hover:shadow-card hover:border-blue-300 transition-all cursor-pointer group"
+        role="button" tabIndex={0} aria-label={`Filter to ${stats.posted} posted deliverables`}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFilterStatus?.('Posted'); } }}
+        className="bg-white rounded-xl p-3.5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       >
         <div className="flex items-center justify-between text-xs text-blue-700 font-medium mb-1.5">
           <span>Live Posted</span>
