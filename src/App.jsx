@@ -1,3 +1,4 @@
+import { LogoMark } from './components/Logo';
 import React, { useState, useMemo, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PlannerProvider, usePlanner } from './context/PlannerContext';
@@ -209,9 +210,7 @@ function DashboardContent() {
   if (isLoadingAuth) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white space-y-4">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-orange-500/30 animate-pulse">
-          CP
-        </div>
+        <LogoMark className="w-14 h-14 animate-pulse" />
         <div className="flex items-center gap-2 text-xs text-slate-400">
           <div className="w-3 h-3 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
           <span>Verifying encrypted session...</span>

@@ -1,3 +1,4 @@
+import Logo from './Logo';
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePlanner } from '../context/PlannerContext';
@@ -66,20 +67,7 @@ export default function Sidebar({
         {/* Top Header / Brand Logo */}
         <div className="h-20 px-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-2xl bg-slate-950 flex items-center justify-center shadow-lg shadow-slate-900/15 text-white font-black text-sm shrink-0 tracking-tight">
-              <span className="text-orange-400">C</span>P
-            </div>
-            {!isCollapsed && (
-              <div className="leading-tight truncate">
-                <div className="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-1.5">
-                  <span>Content Planner</span>
-                </div>
-                <div className="text-[10px] text-slate-500 font-medium truncate flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>FastAPI + MongoDB</span>
-                </div>
-              </div>
-            )}
+            <Logo compact={isCollapsed && !isMobileOpen} />
           </div>
 
           <button

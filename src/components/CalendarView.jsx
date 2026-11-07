@@ -153,6 +153,8 @@ export default function CalendarView({ onEditDeliverable, onNewDeliverableWithDa
         </div>
       </div>
 
+      <div className="overflow-x-auto overscroll-x-contain">
+      <div className="min-w-[700px] lg:min-w-0">
       {/* Weekday Header */}
       <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-100 text-center text-xs font-bold text-slate-600 uppercase py-2.5 tracking-wider">
         {weekDays.map(day => (
@@ -245,6 +247,8 @@ export default function CalendarView({ onEditDeliverable, onNewDeliverableWithDa
         {Array.from({ length: (7 - ((startDayOfWeek + daysInMonth) % 7)) % 7 }).map((_, i) => (
           <div key={`trailing-${i}`} className="min-h-[110px] bg-slate-50/40 p-2"></div>
         ))}
+      </div>
+      </div>
       </div>
     </div>
   );

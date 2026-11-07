@@ -112,8 +112,8 @@ export default function DeliverableModal({ isOpen, onClose, deliverableToEdit, d
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-modal w-full max-w-xl overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-modal w-full max-w-xl max-h-[92dvh] overflow-y-auto overscroll-contain border border-slate-200">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div>
@@ -197,7 +197,7 @@ export default function DeliverableModal({ isOpen, onClose, deliverableToEdit, d
           </div>
 
           {/* Row 2: Date, Week, Status */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block font-bold text-slate-700 mb-1">Publish Date</label>
               <input

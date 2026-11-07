@@ -438,8 +438,8 @@ export default function TeamManager() {
 
       {/* Modal: Add / Edit Team Member */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 p-6 space-y-5 animate-scale-up my-8 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 p-4 sm:p-6 space-y-5 animate-scale-up my-4 sm:my-8 max-h-[92dvh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <span className="p-2 rounded-xl bg-orange-100 text-orange-600">

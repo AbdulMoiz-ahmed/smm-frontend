@@ -152,7 +152,7 @@ export default function ExcelImportModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-modal w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+      <div className="bg-white rounded-2xl shadow-modal w-full max-w-4xl max-h-[92dvh] min-w-0 flex flex-col overflow-hidden border border-slate-200">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
           <div className="flex items-center gap-3">

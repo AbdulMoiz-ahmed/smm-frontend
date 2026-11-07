@@ -413,7 +413,7 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
           <div className="flex flex-wrap items-center gap-2 flex-1">
             {/* Search Input */}
-            <div className="relative min-w-[180px] flex-1 max-w-xs">
+            <div className="relative w-full sm:w-auto sm:min-w-[180px] flex-1 sm:max-w-xs">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"

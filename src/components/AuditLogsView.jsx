@@ -257,7 +257,7 @@ export default function AuditLogsView() {
       <div className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2.5 flex-1">
           {/* Search Box */}
-          <div className="relative min-w-[220px] flex-1 max-w-sm">
+          <div className="relative w-full sm:w-auto sm:min-w-[220px] flex-1 sm:max-w-sm">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
@@ -477,8 +477,8 @@ export default function AuditLogsView() {
       {/* INSPECT LOG METADATA MODAL                 */}
       {/* ────────────────────────────────────────── */}
       {inspectLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg overflow-hidden border border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg max-h-[92dvh] overflow-y-auto overscroll-contain border border-slate-200">
             <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
                 <ScrollText className="w-4 h-4 text-orange-500" />
@@ -493,7 +493,7 @@ export default function AuditLogsView() {
             </div>
 
             <div className="p-5 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/70">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/70">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Action</div>
                   <div className="font-bold text-slate-800 mt-0.5">{inspectLog.action}</div>
@@ -556,8 +556,8 @@ export default function AuditLogsView() {
       {/* CONFIRM CLEAR AUDIT LOGS MODAL             */}
       {/* ────────────────────────────────────────── */}
       {confirmClearOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-modal w-full max-w-md overflow-hidden border border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-modal w-full max-w-md max-h-[92dvh] overflow-y-auto overscroll-contain border border-slate-200">
             <div className="p-6 space-y-4 text-center">
               <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
                 <AlertCircle className="w-6 h-6" />

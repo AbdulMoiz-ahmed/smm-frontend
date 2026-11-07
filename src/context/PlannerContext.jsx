@@ -16,7 +16,7 @@ export function PlannerProvider({ children }) {
   const [deliverables, setDeliverables] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dbConnected, setDbConnected] = useState(false);
-  const [dbType, setDbType] = useState('MongoDB');
+  const [dbType, setDbType] = useState('Database');
   const [toasts, setToasts] = useState([]);
 
   const addToast = (message, type = 'info') => {
@@ -55,7 +55,7 @@ export function PlannerProvider({ children }) {
 
       if (healthRes.ok) {
         const healthData = await healthRes.json();
-        setDbType(healthData.database === 'mongodb' ? 'MongoDB' : 'SQLite');
+        setDbType(healthData.status === 'ok' ? 'Database' : 'Database (degraded)');
       }
 
       if (!clientsRes.ok || !deliverablesRes.ok) {

@@ -65,7 +65,7 @@ export default function FilterBar({
       {/* Search and Dropdowns */}
       <div className="flex flex-wrap items-center gap-2.5 flex-1">
         {/* Search Input */}
-        <div className="relative min-w-[200px] flex-1 sm:max-w-xs">
+        <div className="relative w-full sm:w-auto sm:min-w-[200px] flex-1 sm:max-w-xs">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             aria-label="Search deliverables"

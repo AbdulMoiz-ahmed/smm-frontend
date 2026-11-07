@@ -1,6 +1,6 @@
 {
-  "name": "Codexia Team Content Planner",
-  "short_name": "Team Planner",
+  "name": "Codexia Team \u00b7 Content Planner",
+  "short_name": "Codexia Team",
   "description": "Agency content planner: tasks, calendar, brands and team notifications.",
   "start_url": "/",
   "scope": "/",
@@ -9,8 +9,23 @@
   "background_color": "#f8fafc",
   "theme_color": "#f97316",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
