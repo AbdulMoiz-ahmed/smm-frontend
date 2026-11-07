@@ -61,11 +61,11 @@ export default function FilterBar({
     (filters.datePreset && filters.datePreset !== 'All');
 
   return (
-    <section aria-label="Search and filter deliverables" className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+    <section aria-label="Search and filter deliverables" className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-sm mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
       {/* Search and Dropdowns */}
-      <div className="flex flex-wrap items-center gap-2.5 flex-1">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2.5 flex-1 min-w-0">
         {/* Search Input */}
-        <div className="relative w-full sm:w-auto sm:min-w-[200px] flex-1 sm:max-w-xs">
+        <div className="relative col-span-2 w-full sm:w-auto sm:min-w-[200px] flex-1 sm:max-w-xs">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             aria-label="Search deliverables"
@@ -73,7 +73,7 @@ export default function FilterBar({
             placeholder="Search titles, captions, specs..."
             value={filters.search}
             onChange={e => onFilterChange('search', e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-slate-800 placeholder-slate-400 transition-all"
+            className="w-full pl-9 pr-8 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-slate-800 placeholder-slate-400 transition-all"
           />
           {filters.search && (
               <button
@@ -93,7 +93,7 @@ export default function FilterBar({
             aria-label="Filter by brand"
             value={filters.brand}
             onChange={e => onFilterChange('brand', e.target.value)}
-            className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
+            className="w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
           >
             <option value="All">All Brands</option>
             {clients.map(c => (
@@ -110,7 +110,7 @@ export default function FilterBar({
             aria-label="Filter by month"
             value={filters.month || 'All'}
             onChange={e => onFilterChange('month', e.target.value)}
-            className={`px-2.5 py-1.5 text-xs rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer ${
+            className={`w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer ${
               filters.month && filters.month !== 'All'
                 ? 'bg-orange-50 border border-orange-300 text-orange-900 font-bold'
                 : 'bg-slate-50 border border-slate-200 text-slate-700'
@@ -130,7 +130,7 @@ export default function FilterBar({
           aria-label="Filter by week"
           value={filters.week}
           onChange={e => onFilterChange('week', e.target.value)}
-          className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
+          className="w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
         >
           <option value="All">All Weeks</option>
           {availableWeeks.map(w => (
@@ -142,7 +142,7 @@ export default function FilterBar({
 
         {/* Format Filter */}
         {roleRestrictedFormat ? (
-          <div className="px-2.5 py-1.5 text-xs bg-orange-50 border border-orange-200 rounded-lg text-orange-800 font-bold flex items-center gap-1.5 shadow-2xs">
+          <div className="col-span-2 px-2.5 py-1.5 text-xs bg-orange-50 border border-orange-200 rounded-lg text-orange-800 font-bold flex items-center gap-1.5 shadow-2xs">
             <span>{roleRestrictedFormat === 'Reel' ? '🎬 Reels Only' : '🎨 Posts Only'}</span>
           </div>
         ) : (
@@ -150,7 +150,7 @@ export default function FilterBar({
             aria-label="Filter by format"
             value={filters.format}
             onChange={e => onFilterChange('format', e.target.value)}
-            className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
+            className="w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
           >
             <option value="All">All Formats</option>
             <option value="Reel">Reels (9:16)</option>
@@ -163,7 +163,7 @@ export default function FilterBar({
           aria-label="Filter by status"
           value={filters.status}
           onChange={e => onFilterChange('status', e.target.value)}
-          className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
+          className="w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer"
         >
           <option value="All">All Statuses</option>
           <option value="Scheduled">Scheduled</option>
@@ -177,7 +177,7 @@ export default function FilterBar({
           aria-label="Filter by date"
           value={filters.datePreset || 'All'}
           onChange={e => onFilterChange('datePreset', e.target.value)}
-          className={`px-2.5 py-1.5 text-xs rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 cursor-pointer ${
+          className={`w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 cursor-pointer ${
             filters.datePreset === 'pending-till-today'
               ? 'bg-amber-50 border border-amber-300 text-amber-900 font-bold'
               : filters.datePreset === 'today'
@@ -196,7 +196,7 @@ export default function FilterBar({
             type="button"
             aria-label="Clear all filters"
             onClick={onResetFilters}
-            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors"
+            className="col-span-2 justify-center sm:justify-start inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors"
           >
             <X className="w-3.5 h-3.5" />
             <span>Clear</span>

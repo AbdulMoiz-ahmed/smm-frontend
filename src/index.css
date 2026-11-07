@@ -133,6 +133,6 @@ input:focus, select:focus, textarea:focus {
 
 /* Mobile: avoid iOS zoom on input focus, keep media inside its box */
 @media (max-width: 640px) {
-  input, select, textarea { font-size: 16px !important; }
+  input[type="text"], input[type="email"], input[type="password"], input[type="search"], input:not([type]), textarea { font-size: 16px !important; }
 }
 img, video, svg { max-width: 100%; }

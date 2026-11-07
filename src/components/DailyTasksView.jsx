@@ -187,10 +187,10 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
       {/* ────────────────────────────────────────── */}
       {/* TOP HEADER & DAILY KPI CARDS               */}
       {/* ────────────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-6 text-white shadow-card border border-slate-700/80">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-700/60">
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-4 sm:p-6 text-white shadow-card border border-slate-700/80">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 sm:pb-6 border-b border-slate-700/60">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1.5">
               <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> Daily Maintenance Deck
               </span>
@@ -198,7 +198,7 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
                 System Today: <strong className="text-white">{systemTodayStr}</strong>
               </span>
             </div>
-            <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
               Everyday Post Maintenance & Operations
             </h2>
             <p className="text-xs text-slate-300 mt-1">
@@ -208,7 +208,7 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
 
           <button
             onClick={() => onNewDeliverableWithDate && onNewDeliverableWithDate(activeMode === 'pending-till-today' ? systemTodayStr : selectedDate)}
-            className="self-start md:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all active:scale-95"
+            className="w-full sm:w-auto justify-center sm:self-start md:self-auto inline-flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all active:scale-95"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Schedule Post For This Day</span>
@@ -216,28 +216,28 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
         </div>
 
         {/* 4 Quick Metric Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 mt-4 sm:mt-5">
           {/* Card 1: Pending Backlog Till Today */}
           <div
             onClick={handleSetPendingTillToday}
-            className={`p-4 rounded-xl cursor-pointer transition-all border ${
+            className={`p-3 sm:p-4 min-w-0 rounded-xl cursor-pointer transition-all border ${
               activeMode === 'pending-till-today'
                 ? 'bg-amber-500/20 border-amber-400/80 shadow-md ring-2 ring-amber-400/30'
                 : 'bg-slate-800/80 border-slate-700/80 hover:bg-slate-800 hover:border-slate-600'
             }`}
           >
-            <div className="flex items-center justify-between text-xs text-amber-300 font-semibold mb-1">
-              <span className="flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" /> Pending Till Today
+            <div className="flex items-center justify-between text-xs text-amber-300 font-semibold mb-1 gap-1">
+              <span className="flex items-center gap-1.5 min-w-0 truncate">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" /> <span className="truncate sm:hidden">Pending</span><span className="truncate hidden sm:inline">Pending Till Today</span>
               </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-200">
+              <span className="hidden sm:inline shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-200">
                 Backlog
               </span>
             </div>
             <div className="text-2xl font-black text-amber-400 tracking-tight">
               {metrics.pendingTillTodayCount}
             </div>
-            <p className="text-[11px] text-slate-300 mt-1">
+            <p className="text-[11px] leading-snug text-slate-300 mt-1 line-clamp-2">
               Unposted deliverables due on or before today
             </p>
           </div>
@@ -245,24 +245,24 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
           {/* Card 2: Tasks Due Today */}
           <div
             onClick={handleSetToday}
-            className={`p-4 rounded-xl cursor-pointer transition-all border ${
+            className={`p-3 sm:p-4 min-w-0 rounded-xl cursor-pointer transition-all border ${
               activeMode === 'today'
                 ? 'bg-orange-500/20 border-orange-400/80 shadow-md ring-2 ring-orange-400/30'
                 : 'bg-slate-800/80 border-slate-700/80 hover:bg-slate-800 hover:border-slate-600'
             }`}
           >
-            <div className="flex items-center justify-between text-xs text-orange-300 font-semibold mb-1">
-              <span className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-orange-400" /> Scheduled Today
+            <div className="flex items-center justify-between text-xs text-orange-300 font-semibold mb-1 gap-1">
+              <span className="flex items-center gap-1.5 min-w-0 truncate">
+                <Clock className="w-3.5 h-3.5 text-orange-400" /> <span className="truncate sm:hidden">Today</span><span className="truncate hidden sm:inline">Scheduled Today</span>
               </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-400/20 text-orange-200">
+              <span className="hidden sm:inline shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-orange-400/20 text-orange-200">
                 {metrics.todayPending} Pending
               </span>
             </div>
             <div className="text-2xl font-black text-white tracking-tight">
               {metrics.todayTotal}
             </div>
-            <p className="text-[11px] text-slate-300 mt-1">
+            <p className="text-[11px] leading-snug text-slate-300 mt-1 line-clamp-2">
               {metrics.todayTotal === 0 ? 'Rest day — 0 releases today' : `${metrics.todayPending} posts need attention today`}
             </p>
           </div>
@@ -270,36 +270,36 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
           {/* Card 3: Upcoming Tomorrow */}
           <div
             onClick={handleSetTomorrow}
-            className={`p-4 rounded-xl cursor-pointer transition-all border ${
+            className={`p-3 sm:p-4 min-w-0 rounded-xl cursor-pointer transition-all border ${
               activeMode === 'tomorrow'
                 ? 'bg-purple-500/20 border-purple-400/80 shadow-md ring-2 ring-purple-400/30'
                 : 'bg-slate-800/80 border-slate-700/80 hover:bg-slate-800 hover:border-slate-600'
             }`}
           >
-            <div className="flex items-center justify-between text-xs text-purple-300 font-semibold mb-1">
-              <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-purple-400" /> Tomorrow's Queue
+            <div className="flex items-center justify-between text-xs text-purple-300 font-semibold mb-1 gap-1">
+              <span className="flex items-center gap-1.5 min-w-0 truncate">
+                <Calendar className="w-3.5 h-3.5 text-purple-400" /> <span className="truncate sm:hidden">Tomorrow</span><span className="truncate hidden sm:inline">Tomorrow's Queue</span>
               </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-400/20 text-purple-200">
+              <span className="hidden sm:inline shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-purple-400/20 text-purple-200">
                 Next Up
               </span>
             </div>
             <div className="text-2xl font-black text-purple-300 tracking-tight">
               {metrics.tomorrowTotal}
             </div>
-            <p className="text-[11px] text-slate-300 mt-1">
+            <p className="text-[11px] leading-snug text-slate-300 mt-1 line-clamp-2">
               Prepare assets ahead of release
             </p>
           </div>
 
           {/* Card 4: Progress Till Today */}
-          <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700/80 flex flex-col justify-between">
+          <div className="p-3 sm:p-4 min-w-0 rounded-xl bg-slate-800/80 border border-slate-700/80 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-xs text-emerald-300 font-semibold mb-1">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Posted Till Today
+              <div className="flex items-center justify-between text-xs text-emerald-300 font-semibold mb-1 gap-1">
+                <span className="flex items-center gap-1.5 min-w-0 truncate">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> <span className="truncate sm:hidden">Posted</span><span className="truncate hidden sm:inline">Posted Till Today</span>
                 </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 font-bold">
+                <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 font-bold">
                   {metrics.completionRate}%
                 </span>
               </div>
@@ -411,9 +411,9 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
 
         {/* Filter bar & Layout Toggle */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
-          <div className="flex flex-wrap items-center gap-2 flex-1">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center flex-1 min-w-0">
             {/* Search Input */}
-            <div className="relative w-full sm:w-auto sm:min-w-[180px] flex-1 sm:max-w-xs">
+            <div className="relative col-span-2 w-full sm:w-auto sm:min-w-[180px] flex-1 sm:max-w-xs">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
@@ -428,7 +428,7 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
             <select
               value={selectedBrand}
               onChange={e => setSelectedBrand(e.target.value)}
-              className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none cursor-pointer"
+              className="w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none cursor-pointer"
             >
               <option value="All">All Brands</option>
               {clients.map(c => (
@@ -438,14 +438,14 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
 
             {/* Format Filter */}
             {roleRestrictedFormat ? (
-              <div className="px-2.5 py-1.5 text-xs bg-orange-50 border border-orange-200 rounded-lg text-orange-800 font-bold flex items-center gap-1.5 shadow-2xs">
+              <div className="col-span-2 px-2.5 py-1.5 text-xs bg-orange-50 border border-orange-200 rounded-lg text-orange-800 font-bold flex items-center gap-1.5 shadow-2xs">
                 <span>{roleRestrictedFormat === 'Reel' ? '🎬 Reels Only' : '🎨 Posts Only'}</span>
               </div>
             ) : (
               <select
                 value={selectedFormat}
                 onChange={e => setSelectedFormat(e.target.value)}
-                className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none cursor-pointer"
+                className="w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none cursor-pointer"
               >
                 <option value="All">All Formats</option>
                 <option value="Reel">Reels (9:16)</option>
@@ -457,7 +457,7 @@ export default function DailyTasksView({ onEditDeliverable, onNewDeliverableWith
             <select
               value={selectedStatus}
               onChange={e => setSelectedStatus(e.target.value)}
-              className="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none cursor-pointer"
+              className="w-full sm:w-auto min-w-0 px-2.5 py-2 sm:py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="Planned">Planned</option>
