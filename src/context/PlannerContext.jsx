@@ -78,7 +78,11 @@ export function PlannerProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    if (!user) { setIsLoading(false); return; }
     refreshData();
+    // Keep task data fresh so admin updates reach users without reload
+    const id = setInterval(() => { if (document.visibilityState === 'visible') refreshData(); }, 60000);
+    return () => clearInterval(id);
   }, [user, refreshData]);
 
   // Client Helpers

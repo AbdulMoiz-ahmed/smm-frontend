@@ -6,6 +6,7 @@ import {
   RotateCcw, Crown, Palette, LogOut, CheckCircle2, PenTool, Video, Share2, Briefcase, User
 } from 'lucide-react';
 import { getRoleMeta } from '../utils/roles';
+import NotificationBell from './NotificationBell';
 
 export default function Header({ 
   activeTab, 
@@ -96,6 +97,8 @@ export default function Header({
               <span className="sm:hidden">New</span>
             </button>
           )}
+
+          <NotificationBell />
 
           {/* User Profile Badge */}
           <div className="pl-1 sm:pl-2 border-l border-slate-200 flex items-center gap-2">

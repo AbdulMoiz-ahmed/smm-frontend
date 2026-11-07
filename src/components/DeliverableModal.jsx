@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { usePlanner } from '../context/PlannerContext';
 import { X, Video, Image as ImageIcon, Sparkles } from 'lucide-react';
 
@@ -20,6 +21,15 @@ export default function DeliverableModal({ isOpen, onClose, deliverableToEdit, d
   });
 
   const [errors, setErrors] = useState({});
+  const { hasPermission } = useAuth();
+  const canAssign = hasPermission('manage_deliverables');
+  const [team, setTeam] = useState([]);
+  useEffect(() => {
+    if (!isOpen || !canAssign) return;
+    const t = localStorage.getItem('content_planner_auth_token');
+    fetch('/api/users/directory', { headers: t ? { Authorization: `Bearer ${t}` } : {} })
+      .then(r => (r.ok ? r.json() : [])).then(setTeam).catch(() => setTeam([]));
+  }, [isOpen, canAssign]);
 
   // Auto-calculate week from date
   const computeWeek = (dateStr) => {
@@ -43,7 +53,8 @@ export default function DeliverableModal({ isOpen, onClose, deliverableToEdit, d
         title: deliverableToEdit.title || '',
         asset: deliverableToEdit.asset || '',
         caption: deliverableToEdit.caption || '',
-        status: deliverableToEdit.status || 'Planned'
+        status: deliverableToEdit.status || 'Planned',
+        assignees: deliverableToEdit.assignees || []
       });
     } else {
       const initDate = defaultDate || defaultInitialDate;
@@ -55,7 +66,8 @@ export default function DeliverableModal({ isOpen, onClose, deliverableToEdit, d
         title: '',
         asset: forcedFormat === 'Post' ? '1:1 Infographic Carousel' : '9:16 Cinematic Video',
         caption: '',
-        status: 'Planned'
+        status: 'Planned',
+        assignees: []
       });
     }
     setErrors({});
@@ -266,6 +278,25 @@ export default function DeliverableModal({ isOpen, onClose, deliverableToEdit, d
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             />
           </div>
+
+          {canAssign && team.length > 0 && (
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Assign to team members (they get notified)</label>
+              <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
+                {team.map(m => {
+                  const on = (formData.assignees || []).includes(m.id);
+                  return (
+                    <button type="button" key={m.id}
+                      onClick={() => setFormData(f => ({ ...f, assignees: on ? (f.assignees || []).filter(x => x !== m.id) : [...(f.assignees || []), m.id] }))}
+                      className={`px-2.5 py-1 rounded-full border text-[11px] font-semibold ${on ? 'bg-orange-500 border-orange-500 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                      {m.name} <span className="opacity-70">· {m.role.replace('_', ' ')}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1">Leave empty to notify everyone whose role covers this format and brand.</p>
+            </div>
+          )}
 
           {/* Footer Actions */}
           <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-2.5">

@@ -58,7 +58,8 @@ export default function AuditLogsView() {
   const fetchLogs = useCallback(async (showToast = false) => {
     try {
       setIsRefreshing(true);
-      const res = await fetch('/api/logs?limit=200');
+      const tk = localStorage.getItem('content_planner_auth_token');
+      const res = await fetch('/api/logs?limit=200', { headers: tk ? { Authorization: `Bearer ${tk}` } : {} });
       if (!res.ok) throw new Error('Failed to retrieve audit logs');
       const data = await res.json();
       setLogs(data);
