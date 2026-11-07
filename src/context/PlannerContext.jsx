@@ -72,18 +72,21 @@ export function PlannerProvider({ children }) {
       console.error('Error fetching data from database:', err);
       setDbConnected(false);
       addToast('Cannot connect to database backend. Please check server.', 'error');
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
+  const userId = user?.id;
   useEffect(() => {
-    if (!user) { setIsLoading(false); return; }
-    refreshData();
+    if (!userId) { setIsLoading(false); setClients([]); setDeliverables([]); return; }
+    // Show the session loader after sign-in until the workspace data is ready (min 800ms, no flash)
+    setIsLoading(true);
+    let cancelled = false;
+    const minDelay = new Promise(r => setTimeout(r, 800));
+    Promise.all([refreshData(), minDelay]).then(() => { if (!cancelled) setIsLoading(false); });
     // Keep task data fresh so admin updates reach users without reload
     const id = setInterval(() => { if (document.visibilityState === 'visible') refreshData(); }, 60000);
-    return () => clearInterval(id);
-  }, [user, refreshData]);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [userId, refreshData]);
 
   // Client Helpers
   const getClientColor = (clientName) => {

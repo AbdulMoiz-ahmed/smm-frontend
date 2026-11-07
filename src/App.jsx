@@ -23,11 +23,12 @@ import ExcelImportModal from './components/ExcelImportModal';
 import AuditLogsView from './components/AuditLogsView';
 import MonthlyReportView from './components/MonthlyReportView';
 import Toast from './components/Toast';
+import AppSetupCard from './components/AppSetupCard';
 import { Clock, ArrowRight, ShieldAlert, Calendar, BarChart3, Trash2, Sparkles } from 'lucide-react';
 
 function DashboardContent() {
   const { user, isAuthenticated, isLoadingAuth, isAdmin, hasPermission, canAccessTab } = useAuth();
-  const { deliverables, clients, deleteMonthDeliverables } = usePlanner();
+  const { deliverables, clients, deleteMonthDeliverables, isLoading: isLoadingData, addToast } = usePlanner();
 
   // Navigation state defaults based on user's granted permissions
   const [activeTab, setActiveTab] = useState(() => {
@@ -206,14 +207,20 @@ function DashboardContent() {
     });
   }, [deliverables, filters, todayStr]);
 
-  // Auth gatekeeper
-  if (isLoadingAuth) {
+  // Auth gatekeeper + post-login session loader
+  if (isLoadingAuth || (isAuthenticated && isLoadingData)) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white space-y-4">
-        <LogoMark className="w-14 h-14 animate-pulse" />
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <div className="w-3 h-3 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-          <span>Verifying encrypted session...</span>
+      <div className="min-h-[100dvh] bg-slate-950 flex flex-col items-center justify-center text-white px-6 text-center" role="status" aria-live="polite">
+        <LogoMark className="w-16 h-16 animate-pulse drop-shadow-xl" />
+        <div className="mt-5 text-lg font-extrabold tracking-tight">
+          {isAuthenticated ? <>Welcome{user?.name ? `, ${user.name.split(' ')[0]}` : ''}</> : 'Codexia Team'}
+        </div>
+        <div className="mt-2 flex items-center gap-2 text-xs text-slate-400">
+          <span className="w-3.5 h-3.5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          <span>{isAuthenticated ? 'Loading your workspace…' : 'Verifying secure session…'}</span>
+        </div>
+        <div className="mt-6 h-1 w-40 overflow-hidden rounded-full bg-slate-800">
+          <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 animate-[loaderbar_1.1s_ease-in-out_infinite]" />
         </div>
       </div>
     );
@@ -255,6 +262,7 @@ function DashboardContent() {
 
         {/* Main Application Body */}
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-20">
+          <div className="mb-4 sm:mb-6 empty:hidden"><AppSetupCard variant="banner" onToast={addToast} /></div>
           {/* VIEW 1: DAILY TASKS & TODAY'S DECK (Graphic Designer & Admin) */}
           {activeTab === 'daily' && (
             <div className="animate-fade-in">

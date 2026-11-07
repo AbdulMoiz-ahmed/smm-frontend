@@ -136,3 +136,8 @@ input:focus, select:focus, textarea:focus {
   input[type="text"], input[type="email"], input[type="password"], input[type="search"], input:not([type]), textarea { font-size: 16px !important; }
 }
 img, video, svg { max-width: 100%; }
+
+@keyframes loaderbar {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(220%); }
+}

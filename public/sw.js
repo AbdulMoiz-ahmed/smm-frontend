@@ -1,5 +1,5 @@
 /* Service worker: offline app shell + notification click handling. API calls are never cached. */
-const CACHE = 'planner-shell-v4';
+const CACHE = 'planner-shell-v5';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -32,12 +32,34 @@ self.addEventListener('fetch', (e) => {
   }
 });
 
+self.addEventListener('push', (e) => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; } catch { data = { body: e.data && e.data.text() }; }
+  const title = data.title || 'Codexia Team';
+  const opts = {
+    body: data.body || 'You have a new update.',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/badge-96.png',
+    tag: data.tag || undefined,
+    renotify: !!data.tag,
+    vibrate: [120, 60, 120],
+    data: { url: data.url || '/' },
+  };
+  e.waitUntil(
+    self.registration.showNotification(title, opts).then(() =>
+      self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+        .then((list) => list.forEach((c) => c.postMessage({ type: 'push-received' })))
+    )
+  );
+});
+
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || '/';
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
       for (const c of list) { if ('focus' in c) return c.focus(); }
-      return self.clients.openWindow('/');
+      return self.clients.openWindow(url);
     })
   );
 });

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { AGENCY_ROLES, getRoleMeta } from '../utils/roles';
+import { unlinkPushSubscription } from '../utils/pwa';
 
 const API_BASE = '/api';
 const TOKEN_KEY = 'content_planner_auth_token';
@@ -64,7 +65,8 @@ export function AuthProvider({ children }) {
   };
 
   // Logout handler
-  const logout = () => {
+  const logout = async () => {
+    await unlinkPushSubscription();
     localStorage.removeItem(TOKEN_KEY);
     setToken(null);
     setUser(null);

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { ShieldCheck, Lock, Mail, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { LogoMark } from './Logo';
+import AppSetupCard from './AppSetupCard';
 
 export default function LoginView() {
   const { login } = useAuth();
@@ -114,6 +115,8 @@ export default function LoginView() {
             No account? Ask your administrator to invite you.
           </p>
         </div>
+
+        <AppSetupCard variant="login" installOnly />
 
         <div className="flex items-center justify-center gap-2 text-[11px] text-slate-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />

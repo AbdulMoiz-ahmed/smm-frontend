@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Bell, CheckCheck, Megaphone, Send, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { usePlanner } from '../context/PlannerContext';
+import AppSetupCard from './AppSetupCard';
+import { getPushState, syncPushSubscription } from '../utils/pwa';
 
 const POLL_MS = 30000;
 const authHeaders = () => {
@@ -35,6 +38,8 @@ export default function NotificationBell() {
   const [form, setForm] = useState({ title: '', message: '', roles: [] });
   const [sending, setSending] = useState(false);
   const seen = useRef(null);
+  const pushOn = useRef(false);
+  const { addToast } = usePlanner();
   const boxRef = useRef(null);
 
   const load = useCallback(async () => {
@@ -43,7 +48,8 @@ export default function NotificationBell() {
       if (!res.ok) return;
       const data = await res.json();
       if (seen.current) {
-        data.items.filter(n => !n.read && !seen.current.has(n.id)).slice(0, 3).forEach(showSystemNotification);
+        // If this device gets real push notifications, don't show a duplicate local one
+        if (!pushOn.current) data.items.filter(n => !n.read && !seen.current.has(n.id)).slice(0, 3).forEach(showSystemNotification);
       }
       seen.current = new Set(data.items.map(n => n.id));
       setItems(data.items);
@@ -53,11 +59,14 @@ export default function NotificationBell() {
 
   useEffect(() => {
     if (!user) return;
+    syncPushSubscription().then(() => getPushState()).then(s => { pushOn.current = s === 'on'; });
+    const onMsg = (e) => { if (e.data?.type === 'push-received') load(); };
+    navigator.serviceWorker?.addEventListener('message', onMsg);
     load();
     const id = setInterval(() => { if (document.visibilityState === 'visible') load(); }, POLL_MS);
     const onVis = () => document.visibilityState === 'visible' && load();
     document.addEventListener('visibilitychange', onVis);
-    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVis); };
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVis); navigator.serviceWorker?.removeEventListener('message', onMsg); };
   }, [user, load]);
 
   useEffect(() => {
@@ -68,7 +77,6 @@ export default function NotificationBell() {
 
   const toggle = () => {
     setOpen(o => !o);
-    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
   };
 
   const markAll = async () => {
@@ -122,6 +130,8 @@ export default function NotificationBell() {
               </button>
             </div>
           </div>
+
+          <AppSetupCard variant="panel" onToast={addToast} />
 
           {composer && isAdmin && (
             <form onSubmit={send} className="p-3 space-y-2 border-b border-slate-100 bg-orange-50/50 text-xs">
